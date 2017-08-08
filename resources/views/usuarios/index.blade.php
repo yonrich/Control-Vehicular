@@ -6,9 +6,9 @@
     <div class="col-md-12">
     <h1>Usuarios</h1>
         <nav class="navbar navbar-default">
-          <a class="btn btn-success" aria-label="Left Align" href="{{ route('usuarios.create') }}"> Nuevo</a>
-          <a class="btn btn-warning" href="/usuarios"> Restablecer</a>
-          <a class="btn btn-info" href="/home"> Regresar</a>
+          <a class="btn btn-default btn-sm" aria-label="Left Align" href="{{ route('usuarios.create') }}"> Nuevo</a>
+          <a class="btn btn-default btn-sm" href="/usuarios"> Restablecer</a>
+          <a class="btn btn-default btn-sm" href="/home"> Regresar</a>
         </nav>
     </div>
   </div>

@@ -4,7 +4,17 @@ namespace App\Http\Controllers\ControlVehicular;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+Use Excel;
 use App\Vehiculo;
+use App\Marca;
+Use App\ModPuesto;
+Use App\Munidad;
+Use App\Empleado;
+Use App\estado;
+Use App\municipio;
+Use App\localidad;
+Use App\Chofer;
+
 
 class ControlVehicularController extends Controller
 {
@@ -26,9 +36,11 @@ class ControlVehicularController extends Controller
      */
     public function create()
     {
-        $marcas= Vehiculo::pluck('marca','marca');
-        $submarca= Vehiculo::pluck('submarca','submarca');
-        return view("control-vehicular.create",compact('marcas','submarca'));
+        $marcas= Marca::pluck('marca','marca');
+        $submarca= Marca::pluck('submarca','submarca');
+        $conductor= Chofer::pluck('nombre','empleado');
+        $localidad=Munidad::pluck('descripcion', 'descripcion');
+        return view("control-vehicular.create",compact('marcas','submarca', 'conductor','localidad'));
     }
 
     /**
@@ -47,7 +59,12 @@ class ControlVehicularController extends Controller
         $vehiculo->modelo = $request->modelo;
         $vehiculo->serie = $request->serie;
         $vehiculo->placas = $request->placas;
+        $vehiculo->num_eco = $request->num_eco;
         $vehiculo->seguro = $request->seguro;
+        $vehiculo->conductor = $request->conductor;
+        $vehiculo->tipo = $request->estatus;
+        $vehiculo->tipo_auto = $request->tipo_auto;
+        $vehiculo->localidad = $request->localidad;
         $vehiculo->status = 1;
         $vehiculo->save();
 
@@ -74,9 +91,11 @@ class ControlVehicularController extends Controller
     public function edit($id)
     {
         $vehiculo = Vehiculo::where('id',$id)->first();
-        $marcas= Vehiculo::pluck('marca','marca');
-        $submarca= Vehiculo::pluck('submarca','submarca');
-        return view("control-vehicular.edit",compact('vehiculo','marcas','submarca'));
+        $marcas= Marca::pluck('marca','marca');
+        $submarca= Marca::pluck('submarca','submarca');
+        $conductor= Chofer::pluck('nombre','nombre');
+        $localidad=Munidad::pluck('descripcion', 'descripcion');
+        return view("control-vehicular.edit",compact('vehiculo','marcas','submarca', 'localidad'));
     }
 
     /**
@@ -95,11 +114,29 @@ class ControlVehicularController extends Controller
         $vehiculo->modelo = $request->modelo;
         $vehiculo->serie = $request->serie;
         $vehiculo->placas = $request->placas;
+        $vehiculo->num_eco = $request->num_eco;
         $vehiculo->seguro = $request->seguro;
+        $vehiculo->tipo = $request->estatus;
         $vehiculo->save();
         return redirect()->route('control-vehicular.index');
     }
 
+    public function asignarauto($id)
+    {
+        $vehiculo = Vehiculo::find($id);
+        $conductor= Chofer::pluck('nombre','nombre');
+        $estados= estado::pluck('nombre', 'clave_estado');
+        $localidad=Munidad::pluck('descripcion', 'descripcion');
+        return view('control-vehicular.asignar',compact('vehiculo', 'conductor', 'estados', 'localidad'));
+    }
+    public function saveAsignacion(Request $request){
+        $vehiculo = Vehiculo::find($request->id);
+        $vehiculo->conductor = $request->conductor;
+        $vehiculo->tipo_auto = $request->disponibilidad;
+        $vehiculo->localidad = $request->localidad;
+        $vehiculo->save();
+        return redirect()->route('control-vehicular.index');
+    }    
     /**
      * Remove the specified resource from storage.
      *
@@ -115,4 +152,18 @@ class ControlVehicularController extends Controller
 
         return redirect()->route('control-vehicular.index');
     }
+
+    public function downloadExcel(Request $request, $type)
+    {
+        $data = Vehiculo::all();
+            return Excel::create('export_empleados', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+            });
+        })->download($type);
+    }   
+    
+
+    
 }

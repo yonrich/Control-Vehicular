@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\Vehiculo;
 use App\Bitacora;
 use App\Empleado;
+use App\Marca;
+use App\Chofer;
 use Mail;
 use Yajra\Datatables\Facades\Datatables;
 
@@ -25,7 +27,7 @@ class BitacoraController extends Controller
     }
 
     public function get_datatable(){
-        $bitacoras = Bitacora::select('id','vehiculo','conductor','hsalida','Hentrada','homeotraje','homeotrajeFinal')
+        $bitacoras = Bitacora::select('id','vehiculo','conductor','Hsalida','Hentrada','homeotraje','homeotrajeFinal')
                     ->where('Hentrada',null)->where('homeotrajeFinal',null)->where('obs2','')->where('folio',null)->where('documento_folio',null)->get();
 
         return Datatables::of($bitacoras)
@@ -42,8 +44,8 @@ class BitacoraController extends Controller
      */
     public function create()
     {
-        $empleados= Empleado::pluck('nombre','nombre');
-        $vehiculos = Vehiculo::pluck('vehiculo','vehiculo');
+        $empleados= Chofer::pluck('empleado','empleado');
+        $vehiculos = Vehiculo::pluck('submarca','submarca');
         $option= ['1' => 'Si', '0' => 'No'];
         return view("bitacora.create",compact('vehiculos','option','empleados'));
     }
@@ -59,6 +61,7 @@ class BitacoraController extends Controller
         //dd($request);
         $bitacora = new Bitacora();
         $bitacora->vehiculo = $request->vehiculo;
+        $bitacora->placas = $request->placas;
         $bitacora->conductor = $request->conductor;
         $bitacora->Hsalida = $request->Hsalida;
         $bitacora->homeotraje = $request->homeotraje;
@@ -80,6 +83,7 @@ class BitacoraController extends Controller
         $bitacora->folio = null;
         $bitacora->documento_folio = null;
         $bitacora->obs2 = "";
+        $bitacora->status = 1;
         $bitacora->save();
 
         return redirect()->route('bitacora.index')->with('success','Bitacora creada correctamente');
@@ -92,9 +96,15 @@ class BitacoraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function historial(){
+        $bitacoras = [];
+        return view('bitacora.historial', compact('bitacoras'));
+    }
+
+    public function buscarHistorial(Request $request){
+        //dd($request);
+        $bitacoras = Bitacora::whereBetween('Hsalida', [$request->fechaIncial, $request->fechaFinal])->get();
+        return view('bitacora.historial', compact('bitacoras'));
     }
 
     /**
@@ -125,7 +135,7 @@ class BitacoraController extends Controller
         $bitacora->homeotrajeFinal = $request->homeotrajeFinal;
         $bitacora->obs2 =$request->obs2;
         $bitacora->save();
-        return redirect()->route('bitacora.index')->with('success','Registro de entrada correctamente');;
+        return redirect()->route('bitacora.index')->with('success','Registro de entrada correctamente');
 
     }
 
@@ -135,19 +145,15 @@ class BitacoraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
-    }
+    public function destroy($id){ 
+        $bitacora = Bitacora::find($id);
+        $bitacora->status = 0;
+        $bitacora->save();
+        return redirect()->route('bitacora.index')->with('success','La Bitacora ha sido Eliminada');
+     }
 
     public function guardarFolio(Request $request)
     {
-
-        //Mandamos email de prueba
-        Mail::send('emails.contact', ['msg' => 'Correo de prueba2'], function($msj){
-            $msj->subject('Correo de Prueba');
-            $msj->to('prueba123@yopmail.com');
-        });
         $vehiculo = Bitacora::where('id',$request->id)->first();
         $vehiculo->folio =  $request->folio;
         $vehiculo->documento_folio = $request->documento;
@@ -166,9 +172,25 @@ class BitacoraController extends Controller
         return redirect()->route('bitacora.index')->with('success','Folio asginado correctamente y correo enviado');;
     }
 
+    public function mandarCorreo(Request $request){
+        //Mandamos email de prueba
+        Mail::send('emails.contact', $request->all(), function($msj){
+            $msj->subject('Correo de Prueba');
+            $msj->to('prueba123@yopmail.com');
+        });
+        return redirect()->route('bitacora.index')->with('success','Correo enviado exitoso');;
+    }
+
     public function buscar_bitacora(Request $request){
         $dato=$request->input("dato_buscado");
-        $bitacoras=Bitacora::where('id',$dato)->get();
+        $bitacoras=Bitacora::where('conductor',$dato)->get();
         return view("bitacora.index",compact('bitacoras'));
-      }
+    }
+
+    public function detalle($id){
+        $bitacora = Bitacora::find($id);
+        return view('bitacora.detalle', compact('bitacora'));
+
+    }
+
 }

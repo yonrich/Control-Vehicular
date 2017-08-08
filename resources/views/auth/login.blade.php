@@ -19,7 +19,7 @@
     <div class="mytop-content" >
         <div class="container" > 
           
-                <div class="col-sm-12 " style="background-color:rgba(0, 0, 0, 0.35); height: 60px; " >
+                <div class="col-sm-12 " style="background-color:rgba(0, 0, 0, 0.9); height: 60px; " >
                   
                    <h3>Instituto Nacional del Suelo Sustentable</h3>
                    <!--<a class="mybtn-social pull-right" href="{{ url('/register') }}">
@@ -80,9 +80,9 @@
               </div>
             </div>
             <div class="row">
-                <div class="col-sm-12 mysocial-login">
+                <div style="color: #333;";>
                     <h4>...¿Problemas con el Acceso?...</h4>
-                    <h4><strong>(55) 50809600</strong>   ext.9340</h4>
+                    <h4><strong>(55) 50809600</strong>   ext.9640</h4>
                     
                 </div>
             </div>

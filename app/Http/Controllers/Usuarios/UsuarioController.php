@@ -28,7 +28,7 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        $usuarios = Empleado::where('status',1)->pluck('nombre','id');
+        $usuarios = Empleado::where('status',1)->get();
         $roles = Roles::pluck('slug','id');
         return view("usuarios.create",compact('usuarios','roles'));   
     }
@@ -41,7 +41,17 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+        $empleado = Empleado::where('id',$request->usuario)->first();
+        $usuario = new User();
+        $usuario->empleado_id = $request->usuario;
+        $usuario->name = $empleado->nombre;
+        $usuario->email = $empleado->correo;
+        $usuario->password = bcrypt($request->password);
+        $usuario->status = 1;
+        $usuario->remember_token = $request->_token;
+        $usuario->save();
+        $usuario->roles()->attach($request->rol);
+        return redirect()->route('usuarios.index')->with('success','Usuario creada correctamente');
     }
 
     /**
@@ -50,9 +60,21 @@ class UsuarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function show($id)
     {
-        //
+        $usuario = User::where('id',$id)->first();
+        $usuario->status = 0;
+        $usuario->save();
+        return redirect()->route('usuarios.index')->with('success','Usuario eliminado correctamente');
+    }
+
+
+
+    public function buscarEmail($userId)
+    {
+        $email = Empleado::select('correo')->where('id',$userId)->first();
+         return $email;
     }
 
     /**
@@ -63,7 +85,10 @@ class UsuarioController extends Controller
      */
     public function edit($id)
     {
-        //
+        
+        $usuarios = User::where('id',$id)->first();
+        $roles = Roles::pluck('slug','id'); 
+        return view("usuarios.edit",compact('usuarios','roles'));
     }
 
     /**
@@ -73,10 +98,23 @@ class UsuarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+       /* $usuario =  User::where('id',$request->id)->first();
+        $usuario->roles()->sync($request->rol);
+        return redirect()->route('usuarios.index')->with('success','Usuario modificado correctamente');*/
+    
+        $empleado = Empleado::where('id',$request->usuario)->first();
+        $usuario->empleado_id = $request->usuario;
+        $usuario->name = $empleado->nombre;
+        $usuario->email = $empleado->correo;
+        $usuario->password = $request->password;
+        $usuario->remember_token = $request->_token;
+        $usuario->save();
+
+
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -86,6 +124,9 @@ class UsuarioController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $usuario = User::where('id',$id)->first();
+        $usuario->status = 0;
+        $usuario->save();
+        return redirect()->route('usuarios.index')->with('Danger','Usuario eliminado correctamente');
     }
 }

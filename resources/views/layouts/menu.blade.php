@@ -4,42 +4,13 @@
   <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
     <ul class="nav sidebar-nav">
       <li class="sidebar-brand"> 
-        Usuario
-      </li>
-      <li> <a href="\home">Dashborad</a>
-
+        Panel
       </li>
       <!--  Vehiculos  -->
-      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Control Vehicular <span class="caret"></span></a>
-
-        <ul class="dropdown-menu" role="menu">
-          <li class="dropdown-header">Vehiculos</li>
-          <li><a href="{{ route('control-vehicular.index') }}">Listado de Vehiculos</a>
-
-          </li>
-          <li><a href="{{ route('bitacora.index') }}">Bitacora del dia</a>
-
-          </li>
-        </ul>
-      </li>
-      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recursos Humanos <span class="caret"></span></a>
-
-        <ul class="dropdown-menu" role="menu">
-          <li class="dropdown-header">Empleados</li>
-          <li><a href="{{ route('empleados.index') }}">Listado de Empleados</a></li>
-          <li><a href="">Catalogos</a></li>
-        </ul>
-      </li>
-      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administracion <span class="caret"></span></a>
-
-        <ul class="dropdown-menu" role="menu">
-          <li class="dropdown-header">Usuarios</li>
-          <li><a href="{{ route('usuarios.index') }}">Roles y Permisos</a>
-
-          </li>
-        </ul>
-      </li>
-      
+      <?php $misroles = Session::get('roles'); ?>
+        @foreach($misroles[0]->permisos as $permiso)
+          <li><a  href="{{route($permiso->slug) }}">{{$permiso->name}}</span></a></li>
+        @endforeach
     </ul>
   </nav>
   <!-- /#sidebar-wrapper -->

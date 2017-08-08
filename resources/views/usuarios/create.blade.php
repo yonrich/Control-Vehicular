@@ -14,13 +14,17 @@
                 <div class="col-sm-4 col-md-4"> 
                     <div class="input-group"> 
                         {!! Form::Label('Usuario', 'Usuario:') !!}
-                        {!! Form::select('usuario', $usuarios, null, ['class' => 'form-control']) !!}
+                        <select class="form-control" id="usuario" name="usuario">
+                         @foreach($usuarios as $usuario)
+                           <option value="{{$usuario->id}}"> {{ $usuario->nombre }} </option>
+                         @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="col-sm-4 col-md-4">
                     <div class="input-group">
-                       {!! Form::Label('Correo', 'Correo:') !!}
-                        {!! Form::email('login',null,['placeholder'=>'login','class'=>'form-control','required'=>'required']) !!}
+                        {!! Form::Label('Correo', 'Correo:') !!}
+                        <input type="text" id="login" class="form-control" name="login" disabled="true"></input>
                     </div>
                 </div> 
              </div> 
@@ -47,7 +51,14 @@
         </div>
     </div>
 </div> 
-</div>
-
+<script>
+$( "#usuario" ).change(function() {
+  var userId = $( "#usuario" ).val();
+   $.get('http://localhost:8000/buscarEmail/' + userId, function (data) {
+            console.log(data);
+            $("#login").val(data.correo);
+     })
+});
+</script>
 @endsection
 

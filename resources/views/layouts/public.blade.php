@@ -7,21 +7,21 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
 
     <title>{{ config('app.name', 'Sistema-insus') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/menu.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://datatables.yajrabox.com/js/jquery.min.js"></script>
 <script src="https://datatables.yajrabox.com/js/bootstrap.min.js"></script>
 <script src="https://datatables.yajrabox.com/js/jquery.dataTables.min.js"></script>
-<script src="https://datatables.yajrabox.com/js/datatables.bootstrap.js"></script>
 <script src="https://datatables.yajrabox.com/js/handlebars.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.0.0/jquery.mark.min.js"></script>
 
-    
+
+
 
     <!-- Latest compiled and minified CSS -->
 
@@ -41,8 +41,8 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Sistema-insus') }}
+                    <a class="navbar-brand" href="{{ url('/home') }}">
+                        {{ config('app.name', 'Sistema-INSUS') }}
                     </a>
                 </div>
 
@@ -122,15 +122,10 @@
         function vModal(id) {
             document.getElementById("id").value = id;
         }
-    </script>
-    <script type="text/javascript">
-        $(function() {
-            $('#bitacora-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: 'http://insus1.dev/bitacoras/get_datatable',
-            });
-        });
-    </script>
+
+
+
+
+
 </body>
 </html>

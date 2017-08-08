@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Sistema-insus') }}</title>
+    <title>{{ config('app.name', 'Instituto Nacional del Suelo Sustentable') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -29,8 +29,8 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Sistema-insus') }}
+                    <a class="navbar-brand" href="{{ url('/home') }}">
+                        {{ config('app.name', 'Instituto Nacional del Suelo Sustentable ') }}
                     </a>
                 </div>
 
